@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="create-deck">
+    <h2>Crie seu baralho</h2>
+  </div>
+  <div class="create-folder">
+    <input type="text" [(ngModel)]="folderName" placeholder="Nome do baralho">
+    <button (click)="createFolder()">Criar Baralho</button>
+  </div>
+  <div class="folders-list">
+    <h2>Meus Baralhos:</h2>
+    <ul>
+      <div *ngFor="let folder of folders">
+        <button mat-icon-button (click)="openEditFolderDialog(folder)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteFolder(folder)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <span class="folder-name">Baralho: {{ folder }}</span>
+        <button class="buttons" (click)="openFolderModal(folder)">Ver Baralho</button>
+        <button class="buttons" (click)="openAddCardsModal(folder)">Adicionar Cartas</button>
+      </div>
+    </ul>
+  </div>
+  
+  <div *ngIf="isFolderModalOpen" class="modal">
+    <div class="modal-content">
+      <h2>{{ selectedFolder }}</h2>
+      <div class="header">
+        <h2>Detalhes da Pasta:</h2>
+        <div class="header-info">
+          <p class="info">Tipos Únicos: <span>{{ uniqueTypesCount }}</span></p>
+          <p class="info">Supertipos Pokémon: <span>{{ pokemonSupertypesCount }}</span></p>
+        </div>
+      </div>
+      <ul>
+        <li *ngFor="let cardId of getFolderCards()">
+          <div class="card-item">
+            <img class="card-image" [src]="getCardImage(cardId)" alt="Card Image" (click)="expandCard(cardId)">
+            <div class="card-info">
+              <h3>{{ getCardName(cardId) }}</h3>
+              <p>Type: {{ getCardType(cardId) }}</p>
+              <p>Subtype: {{ getCardSubtype(cardId) }}</p>
+              <p>Supertype: {{ getCardSupertype(cardId) }}</p>
+              <p>Rarity: {{ getCardRarity(cardId) }}</p>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <button (click)="closeFolderModal()">Fechar Baralho</button>
+    </div>
+  </div>
+
+  <div *ngIf="isAddCardsModalOpen" class="modal">
+    <div class="modal-content">
+      <h2>Selecione as Cartas</h2>
+      <div *ngIf="isLoading; else cardList">
+        <p>Carregando cartas...</p>
+      </div>
+      <ng-template #cardList>
+      <ul class="card-list">
+        <li *ngFor="let card of cards" class="card-item">
+          <label>
+            <input type="checkbox" [checked]="selectedCards[card.id]" (change)="toggleCardSelection(card)">
+            <img class="card-image" [src]="card.images.large" alt="Card Image">
+            <div class="card-info">
+              <p><strong>Name:</strong> {{ card.name }}</p>
+              <p><strong>Supertype:</strong> {{ card.supertype }}</p>
+              <p><strong>Type:</strong> {{ card.types }}</p>
+              <p><strong>Subtypes:</strong> {{ card.subtypes }}</p>
+              <p><strong>Rarity:</strong> {{ card.rarity }}</p>
+            </div>
+          </label>
+        </li>
+      </ul>
+    </ng-template>
+      <button (click)="saveSelectedCards()">Salvar</button>
+    </div>
+  </div>
+
+  <div class="background-image"></div>
+  <div class="black-bar">
+    <h1 class="title-footer">Informações</h1>
+    <p class="text-footer">Personalize seu baralho: altere o nome, visualize e gerencie suas cartas. Ao clicar em uma carta, veja seus detalhes e adicione ou remova cartas do seu baralho. Divirta-se!</p>
+  </div>
+</div>
